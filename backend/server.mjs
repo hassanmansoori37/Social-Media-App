@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
-import { postRouter } from './routes/index.mjs'
+import { authRouter, postRouter } from './routes/index.mjs'
 import {connect_database} from './libs/mongoDb.mjs'
 const app = express()
 const port = 409
@@ -22,6 +22,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api/v1' , postRouter)
+app.use('/api/v1' , authRouter)
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)

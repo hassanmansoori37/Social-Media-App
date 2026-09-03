@@ -1,8 +1,9 @@
 import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
-import { authRouter, postRouter } from './routes/index.mjs'
+import { authRouter, postRouter, profileRouter } from './routes/index.mjs'
 import {connect_database} from './libs/mongoDb.mjs'
+import { authGuardJWT } from './middlewares/index.mjs'
 const app = express()
 const port = 409
 
@@ -21,8 +22,12 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-app.use('/api/v1' , postRouter)
+
 app.use('/api/v1' , authRouter)
+app.use('/api/v1' , authGuardJWT)
+app.use('/api/v1' , postRouter)
+app.use('/api/v1' , profileRouter)
+
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)

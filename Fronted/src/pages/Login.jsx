@@ -30,7 +30,8 @@ const Login = () => {
     })
      alert("Login done")
     //  navigate('/login')
-
+    // console.log(resp.data.data)
+    localStorage.setItem("token" , resp.data.data)
             
         } catch (error) {
             console.error(error);

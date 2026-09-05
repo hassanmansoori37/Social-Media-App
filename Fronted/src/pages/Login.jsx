@@ -2,12 +2,19 @@
 import { useState } from "react"
 import Input  from "../components/Input"
 import Button from "../components/Button"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { baseUrl } from "../core"
 import axios from "axios"
+import { store } from "../store/states"
+
 const Login = () => {
+    const {globalLogin} = store()
+
+
     const [email, set_email] = useState("")
     const [password, set_password] = useState("")
+
+    const navigate = useNavigate()
 
      const handleSubmit = async(e) => {
         e.preventDefault()
@@ -30,8 +37,10 @@ const Login = () => {
     })
      alert("Login done")
     //  navigate('/login')
-    // console.log(resp.data.data)
-    localStorage.setItem("token" , resp.data.data)
+    console.log(resp.data.data)
+    localStorage.setItem("token" , resp.data.data.token)
+    globalLogin(resp.data.data.user)
+    navigate('/')
             
         } catch (error) {
             console.error(error);

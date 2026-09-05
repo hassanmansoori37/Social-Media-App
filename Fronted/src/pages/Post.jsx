@@ -3,6 +3,8 @@ import '../App.css'
 import Form from '../components/Form'
 import axios from 'axios'
 import moment from 'moment'
+import Header from '../components/Header'
+import { baseUrl } from '../core'
 
 const Post = () => {
   const [post, setPost] = useState([])
@@ -13,13 +15,18 @@ const Post = () => {
 
   const getAllPost = async() => {
     try {
-      const resp = await axios.get("http://localhost:409/api/v1/post")
+     const resp = await axios.get(`${baseUrl}/api/v1/post` , {
+      headers: {
+        token: localStorage.getItem("token")
+    }
+
+     })
       // console.log(resp.data.data);
       setPost(resp.data.data)
       
       
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   }
 
@@ -32,12 +39,18 @@ const Post = () => {
     // console.log(postId);
 
     try {
-      const resp = await axios.delete(`http://localhost:409/api/v1/post/${postId}`)
+      const resp = await axios.delete(`${baseUrl}/api/v1/post/${postId}` , {
+         headers: {
+        token: localStorage.getItem("token")
+    }
+
+
+      })
       alert("post delete")
       getAllPost()
       
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   }
 
@@ -53,16 +66,21 @@ const Post = () => {
     // console.log(postId);
 
     try {
-     const resp = await axios.put(`http://localhost:409/api/v1/post/${postId}` , {
+     const resp = await axios.put(`${baseUrl}/api/v1/post/${postId}` , {
         title: editTitle,
         description: editDesc,
-      })
+      },
+       {
+                headers: {
+                    token: localStorage.getItem("token")
+                }
+            })
 
       alert("post edit")
       getAllPost()
       
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
       
       
@@ -74,6 +92,7 @@ const Post = () => {
   
   return(
   <div>
+    <Header />
     <Form getAllPost={getAllPost} />
     <div className='result flex justify-start items-start gap-2 p-2 flex-wrap'>
       {post.map((singlePost, index) => {

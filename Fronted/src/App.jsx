@@ -8,6 +8,7 @@ import { baseUrl } from './core';
 import { useEffect } from 'react';
 import { store } from './store/states';
 import SplaceScreen from './pages/SplachScreen';
+import Profile from './pages/Profile';
 
 
 const App = () => {
@@ -49,6 +50,7 @@ const App = () => {
       {isLogin == true ? 
       <Routes>
         <Route path='/' element={<Post />} />
+        <Route path='/profile' element={<Profile />} />
       <Route path='*' element={<Navigate to = '/' />} />
       </Routes> : null}
 

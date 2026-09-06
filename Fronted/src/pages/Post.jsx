@@ -5,9 +5,14 @@ import axios from 'axios'
 import moment from 'moment'
 import Header from '../components/Header'
 import { baseUrl } from '../core'
+import { store } from '../store/states'
+import { FaRegThumbsUp as LikeEmpty, FaThumbsUp as LikeFill } from "react-icons/fa";
+import { FaCommentAlt as CommentIcon } from "react-icons/fa";
+import { IoMdShare as ShareIcon } from "react-icons/io";
 
 const Post = () => {
   const [post, setPost] = useState([])
+  const {user} = store()
 
   useEffect(() => {
     getAllPost()
@@ -98,17 +103,29 @@ const Post = () => {
       {post.map((singlePost, index) => {
       return(
         <div key={index} className='border-2 p-2 flex flex-col gap-2 rounded-lg w-full'>
-          <b>{moment(singlePost.id).fromNow()}</b>
+          <div className='w-full flex items-center gap-2'>
+            <img className='w-12 h-12 rounded-full border' src={singlePost.userId.profilePicture}
+             alt="profile-picture" />
+             <h3 className='text-xl font-bold text-left'>{singlePost.userId.firstname} {singlePost.userId.lastname}</h3>
+             <b className='ml-auto'>{moment(singlePost.id).fromNow()}</b>
+          </div>
+          
           <h2 className='font-bold text-2xl'>{singlePost.title}</h2>
           <p>{singlePost.description}</p>
 
-          <div className='flex gap-2'>
+          {user._id === singlePost.userId._id ?   <div className='flex gap-2'>
             <button onClick={() => editPost(singlePost._id, singlePost.title,singlePost.description)}
              className='bg-green-600 cursor-pointer hover:bg-green-500 transition-colors
             duration-400 text-white text-xs py-2 px-4 rounded-md'>Edit</button>
             <button onClick={() => deletePost(singlePost._id)}
              className='bg-red-600 hover:bg-red-500 transition-colors duration-400 cursor-pointer
              text-white text-xs py-2 px-4 rounded-md'>Delete</button>
+          </div> : null}
+
+          <div className='w-full grid grid-cols-3 gap-2'>
+            <button className='cursor-pointer p-2 w-full flex justify-center items-center gap-2 bg-gray-300 rounded-md hover:bg-gray-500 hover:text-white transition-colors duration-200'><LikeEmpty />Like</button>
+            <button className='cursor-pointer p-2 w-full flex justify-center items-center gap-2 bg-gray-300 rounded-md hover:bg-gray-500 hover:text-white transition-colors duration-200'><CommentIcon />Comment</button>
+            <button className='cursor-pointer p-2 w-full flex justify-center items-center gap-2 bg-gray-300 rounded-md hover:bg-gray-500 hover:text-white transition-colors duration-200'><ShareIcon />Share</button>
           </div>
         </div>
       )

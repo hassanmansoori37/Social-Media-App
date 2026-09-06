@@ -1,6 +1,7 @@
 import React from "react"
 import { useRef } from "react"
 import axios from "axios"
+import { baseUrl } from "../core"
 
 const Form = ({getAllPost}) => {
     const titleRef = useRef(null)
@@ -20,17 +21,21 @@ const Form = ({getAllPost}) => {
         }
 
         try {
-            const resp = await axios.post("http://localhost:409/api/v1/post"
+            const resp = await axios.post(`${baseUrl}/api/v1/post`
              , {
                 title: titleRef.current.value,
                 description: descriptionRef.current.value
+            } , {
+                headers: {
+                 token: localStorage.getItem("token")
+                }
             })
             alert("post created")
             getAllPost()
             event.target.reset()
             
         } catch (error) {
-            console.error(error);       
+            console.log(error);       
             
         }
         

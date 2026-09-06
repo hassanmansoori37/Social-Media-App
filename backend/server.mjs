@@ -23,10 +23,12 @@ app.get('/', (req, res) => {
 })
 
 
-app.use('/api/v1' , authRouter)
-app.use('/api/v1' , authGuardJWT)
-app.use('/api/v1' , postRouter)
-app.use('/api/v1' , profileRouter)
+app.use('/api/v1' ,
+   authRouter,
+   authGuardJWT, 
+   postRouter,
+   profileRouter)
+
 
 
 app.listen(port, () => {

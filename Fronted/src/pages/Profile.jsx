@@ -9,8 +9,10 @@ import Button from "../components/Button";
 
 
 
+
 const Profile = () => {
     const { user, globalLogin } = store()
+    
     //  console.log(user);
 
     const editProfile = async () => {
@@ -41,6 +43,10 @@ const Profile = () => {
          }
         
     }
+
+     const [currentPassword, setcurrentPassword] = useState("")
+     const [newPassword, setnewPassword] = useState("")
+     const [repPassword, setrepPassword] = useState("")
 
     const updatePassword = async() => {
         console.log("Update Password");
@@ -87,19 +93,66 @@ const Profile = () => {
         
 
     }
-    const [currentPassword, setcurrentPassword] = useState("")
-     const [newPassword, setnewPassword] = useState("")
-      const [repPassword, setrepPassword] = useState("")
+    
+
+      const uploadFiles = async(file) => {
+        if (!file) return
+
+        const formData = new FormData()
+        formData.append("my-file" , file)
+
+         try {
+        const resp = await axios.put(
+            `${baseUrl}/api/v1/profile-picture`,
+            formData,
+            {
+                headers: {
+                    token: localStorage.getItem("token")
+                }
+            }
+        )
+
+            // console.log(resp);
+
+             globalLogin({
+                ...user,
+                profilePicture: resp.data.url
+             })
+            
+            
+        } catch (error) {
+            console.log(error);
+             alert(error.response.data.message)
+            
+            
+        }
+
+    
+      }
      
      
     return(
         <div className="w-full p-4 flex flex-col gap-4 pb-32">
 
             {/* edit Profile */}
-            <h2 className="text-3xl font-bold">Your Profile</h2>
-            <img className="w-64 h-64 rounded-full border"
+            <h2 className="text-3xl font-bold">
+                <span className="cursor-pointer" onClick={() => window.history.back()}>{"<"}</span>
+                Your Profile
+                </h2>
+
+            <div className='relative w-64 h-64'>   
+             <img className="w-64 h-64 rounded-full border"
              src= {user.profilePicture || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS73K-hNaw6ETaPB2zU7PqIiWDgchEYFoDcaRJLGtHYRg&s=10"}
               alt="profile" />
+              <input type="file" hidden id="profile-selector" accept="image/*" 
+               onChange={(e) => uploadFiles(e.target.files[0])}/>
+              <label htmlFor="profile-selector">
+               <FaPencil
+                className="cursor-pointer absolute right-4 bottom-4 bg-white border w-8 h-8 p-2 rounded-full"
+               />
+               </label>
+            </div>
+          
               <h3 className="w-full text-2xl flex gap-2">{user.firstname} {user.lastname}
                 <FaPencil className="cursor-pointer" onClick={editProfile}/>
               </h3>

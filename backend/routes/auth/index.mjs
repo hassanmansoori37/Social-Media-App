@@ -144,7 +144,7 @@ router.post('/login' , async (req, res) => {
             _id: userAccount._id
 
             
-        }, process.env.JWT_KEY , {expiresIn: '15m'})
+        }, process.env.JWT_KEY , {expiresIn: '1d'})
 
 
         

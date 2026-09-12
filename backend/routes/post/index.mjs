@@ -132,8 +132,10 @@ router.put('/post/:postId' , async(req, res) => {
             
         }
 
-        const post = await PostModel.findOne({_id: postid})
-          if (req.currentUser._id !== post.userId) {
+        const post = await PostModel.findOne({_id: postId})
+      
+
+          if (req.currentUser._id.toString() !== post.userId.toString()) {
             return res.status(401).send({
                 message: "you cannot edit this post"
             })
@@ -178,8 +180,9 @@ router.delete('/post/:postId' , async(req, res) => {
             })
             
         }
-          const post = await PostModel.findOne({_id: postid})
-          if (req.currentUser._id !== post.userId) {
+          const post = await PostModel.findOne({_id: postId})
+           
+          if (req.currentUser._id.toString() !== post.userId.toString()) {
             return res.status(401).send({
                 message: "you cannot delete this post"
             })

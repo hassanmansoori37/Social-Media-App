@@ -1,5 +1,5 @@
 import express from 'express'
-import { UserModel } from '../../models/index.mjs';
+import { PostModel, UserModel } from '../../models/index.mjs';
 import bcrypt from 'bcryptjs';
 import { multerMiddleware }from '../../libs/multer.mjs'
 import { uploadCloudinary } from '../../libs/cloudinary.mjs';
@@ -8,10 +8,11 @@ import { uploadCloudinary } from '../../libs/cloudinary.mjs';
 const router = express.Router()
 
 // get profile
-router.get('/profile' , (req, res) => {
-    try {
 
-        return res.send({
+router.get('/profile' , async(req, res) => {
+    try {
+       
+         return res.send({
             message: "profile fetched",
             data: req.currentUser
         })
@@ -24,6 +25,29 @@ router.get('/profile' , (req, res) => {
         
     }
 })
+
+router.get('/profile/:userId' , async(req, res) => {
+    try {
+        const userId = req.params.userId || req.currentUser.userId
+
+        const user = await UserModel.findOne({_id: userId})
+
+        return res.send({
+            message: "profile fetched",
+            data: user
+        })
+        
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send({
+            message: "Internal server error"
+        })
+        
+    }
+})
+
+
+
 
 // update profile
 router.put('/profile' , async(req, res) => {
@@ -166,6 +190,27 @@ router.put('/password' , async(req, res) => {
         
     }
 })
+
+router.get('/profile/posts/:userId' , async(req, res) => {
+    try {
+
+        const allPosts = await PostModel.find({userId: req.params.userId}).populate("userId")
+
+        return res.send({
+            message: "profile posts fetched",
+            data: allPosts
+        })
+        
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send({
+            message: "Internal server error"
+        })
+        
+    }
+})
+
+
 // update email
 
 export default router

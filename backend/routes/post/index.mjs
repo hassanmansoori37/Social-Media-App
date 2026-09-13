@@ -70,14 +70,28 @@ router.post('/post' ,multerMiddleware.any(), async (req, res) => {
     }
 })
 
-router.get('/post' , async(req, res) => {
+router.get("/post", async (req, res) => {
     try {
-        const allPost = await PostModel.find().populate("userId")
+        const q = req.query.q ? req.query.q.trim() : ""
+
+        // Build query filter
+        let query = {}
+        if (q) {
+            query = {
+                $or: [
+                    { title: { $regex: q, $options: "i" } },
+                    { description: { $regex: q, $options: "i" } }
+                ]
+            }
+        }
+
+        const allPost = await PostModel.find(query).populate("userId")
+
         return res.send({
-            message: "all post fetched",
+            message: "all posts fetched",
             data: allPost
         })
-        
+
     } catch (error) {
         console.error(error);
         res.status(500).send({

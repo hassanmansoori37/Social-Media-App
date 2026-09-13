@@ -2,22 +2,30 @@ import { useEffect, useState } from 'react'
 import '../App.css'
 import Form from '../components/Form'
 import axios from 'axios'
-import moment from 'moment'
 import Header from '../components/Header'
 import { baseUrl } from '../core'
-import { store } from '../store/states'
 import {PostComponent } from '../components/PostComponent'
+import Input from '../components/Input'
+import { useDebounce } from '../hooks/useDebounce'
+
+
 const Post = () => {
   const [post, setPost] = useState([])
+    const [searchText, setSearchText] = useState('')
   
 
-  useEffect(() => {
-    getAllPost()
-    }, [])
+  // Debounce the input value by 500ms
+  const debouncedSearchText = useDebounce(searchText, 500)
 
-  const getAllPost = async() => {
+  // Fetch posts whenever the debounced search text updates
+  useEffect(() => {
+    getAllPost(debouncedSearchText)
+  }, [debouncedSearchText])
+
+
+  const getAllPost = async(searchText = "") => {
     try {
-     const resp = await axios.get(`${baseUrl}/api/v1/post` , {
+     const resp = await axios.get(`${baseUrl}/api/v1/post?q=${searchText}` , {
       headers: {
         token: localStorage.getItem("token")
     }
@@ -40,11 +48,16 @@ const Post = () => {
   return(
   <div>
     <Header />
-    <Form getAllPost={getAllPost} />
+    <Form getAllPost={() => getAllPost(debouncedSearchText)} />
+    <div className='w-[800px] m-auto my-8'>
+        <Input type='search' placeholder="Search post..." onChange={(e) => setSearchText(e.target.value)
+        }/>
+    </div>
+  
     <div className='result flex justify-start items-start gap-2 p-2 flex-wrap'>
       {post.map((singlePost, index) => {
       return(
-        <PostComponent singlePost={singlePost} key={index}  getAllPost={() => getAllPost()} />
+        <PostComponent singlePost={singlePost} key={index}  getAllPost={() => getAllPost(debouncedSearchText)} />
         
 
         )})}

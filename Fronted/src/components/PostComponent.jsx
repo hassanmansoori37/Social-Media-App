@@ -97,6 +97,7 @@ export const PostComponent = ({singlePost, getAllPost }) => {
           <Link to={`/post/${singlePost?._id}`}>
           <h2 className='font-bold text-2xl'>{singlePost?.title}</h2>
           <p>{singlePost?.description}</p>
+          </Link>
           {/* <img src={singlePost.imageUrl} alt="post-image" /> */}
           {singlePost?.imageUrl ? 
           <a href={singlePost.imageUrl} target='_blank'>
@@ -108,7 +109,7 @@ export const PostComponent = ({singlePost, getAllPost }) => {
           </a>
          : null
         }
-          </Link>
+          
 
           {user?._id === singlePost?.userId?._id ?   <div className='flex gap-2'>
             <button onClick={() => editPost(singlePost?._id, singlePost?.title,singlePost?.description)}

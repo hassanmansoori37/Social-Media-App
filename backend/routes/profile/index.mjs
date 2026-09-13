@@ -126,7 +126,7 @@ router.put('/profile-picture', multerMiddleware.any() , async(req, res, next) =>
 
         await UserModel.findByIdAndUpdate({_id: req.currentUser._id} , {
             $set: {
-                profilePicture: fileResp.url
+                profilePicture: fileResp.secure_url
 
             }
         })
@@ -138,7 +138,7 @@ router.put('/profile-picture', multerMiddleware.any() , async(req, res, next) =>
         
         return res.send({
             message: "profile-picture updated",
-            url: fileResp.url
+            url: fileResp.secure_url
         })
         
     } catch (error) {

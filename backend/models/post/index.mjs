@@ -13,10 +13,10 @@ const postSchema = new mongoose.Schema({
         trim: true
     },
 
-    ImageUrl: {
+    imageUrl: {
         type: String,
         trim: true,
-        default: null
+        default: null,
     },
 
     userId: {

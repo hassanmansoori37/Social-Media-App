@@ -97,6 +97,17 @@ export const PostComponent = ({singlePost, getAllPost }) => {
           <Link to={`/post/${singlePost?._id}`}>
           <h2 className='font-bold text-2xl'>{singlePost?.title}</h2>
           <p>{singlePost?.description}</p>
+          {/* <img src={singlePost.imageUrl} alt="post-image" /> */}
+          {singlePost?.imageUrl ? 
+          <a href={singlePost.imageUrl} target='_blank'>
+            <img
+        className=" h-130 object-contain block "
+        src={singlePost.imageUrl}
+        alt="post-image"
+          /> 
+          </a>
+         : null
+        }
           </Link>
 
           {user?._id === singlePost?.userId?._id ?   <div className='flex gap-2'>

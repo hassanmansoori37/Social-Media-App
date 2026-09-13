@@ -1,10 +1,12 @@
 import express from 'express'
 import { PostModel } from '../../models/post/index.mjs'
 import { isValidObjectId } from 'mongoose'
+import { multerMiddleware } from '../../libs/multer.mjs'
+import { uploadCloudinary } from '../../libs/cloudinary.mjs';
 
 const router = express.Router()
 
-router.post('/post' , async (req, res) => {
+router.post('/post' ,multerMiddleware.any(), async (req, res) => {
     try {
         if (!req.body.title) {
             res.status(400).send({
@@ -20,10 +22,39 @@ router.post('/post' , async (req, res) => {
             
         }
 
+        const file = req?.files[0]
+        let imageUrl = null
+
+        if (file) {
+             if (!file.mimetype.startsWith("image")) {
+            return res.status(400).send({
+                message: "only image are allowed"
+
+            })
+            
+        }
+
+        if (file.size > 1000000) {
+            return res.status(400).send({
+                message: "file uploads limit is 1mb"
+            })
+            
+        }
+
+
+            const fileResp = await uploadCloudinary(file)
+            imageUrl = fileResp?.secure_url
+            
+        }
+
+
+
+
         await PostModel.create({
             title: req.body.title,
             description: req.body.description,
-            userId: req.currentUser._id
+            userId: req.currentUser._id,
+           imageUrl: imageUrl
         })
 
         return res.send({

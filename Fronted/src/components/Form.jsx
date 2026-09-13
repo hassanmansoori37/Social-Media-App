@@ -6,6 +6,7 @@ import { baseUrl } from "../core"
 const Form = ({getAllPost}) => {
     const titleRef = useRef(null)
     const descriptionRef = useRef (null)
+    const fileRef = useRef(null)
 
     const handleSubmit = async(event) => {
         event.preventDefault()
@@ -20,12 +21,18 @@ const Form = ({getAllPost}) => {
          return
         }
 
+        const formData = new FormData()
+        formData.append("title" , titleRef.current.value)
+        formData.append("description" , descriptionRef.current.value)
+
+        if (fileRef.current.files.length) {
+            formData.append("file" , fileRef.current.files[0])
+            
+        }
+
         try {
             const resp = await axios.post(`${baseUrl}/api/v1/post`
-             , {
-                title: titleRef.current.value,
-                description: descriptionRef.current.value
-            } , {
+             , formData , {
                 headers: {
                  token: localStorage.getItem("token")
                 }
@@ -49,6 +56,8 @@ const Form = ({getAllPost}) => {
             ref={titleRef} required/>
             <textarea placeholder="description..." className="border-2 p-2 rounded-lg w-full"
             ref={descriptionRef} required></textarea>
+            <input type="file" accept="image/*" ref={fileRef}
+            className="bg-gray-300 text-center w-fit rounded-2xl py-2 px-4 cursor-pointer mr-auto"/>
             <button className="bg-blue-800 text-white rounded-lg px-16 py-2
              cursor-pointer hover:bg-blue-600 transition-colors duration-400
               ml-auto" type="submit">Submit</button>

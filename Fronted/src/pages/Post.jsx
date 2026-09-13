@@ -44,7 +44,7 @@ const Post = () => {
     <div className='result flex justify-start items-start gap-2 p-2 flex-wrap'>
       {post.map((singlePost, index) => {
       return(
-        <PostComponent singlePost={singlePost} key={index}  getAllPost={getAllPost} />
+        <PostComponent singlePost={singlePost} key={index}  getAllPost={() => getAllPost()} />
         
 
         )})}

@@ -43,6 +43,13 @@ const Profile = () => {
                 firstname: firstname,
                 lastname: lastname,
             })
+            
+            setuserData({
+                ...userData,
+                firstname: firstname,
+                lastname: lastname,
+            })
+
          } catch (error) {
             console.log(error);
             alert(error.response.data.message)
@@ -55,6 +62,7 @@ const Profile = () => {
      const [currentPassword, setcurrentPassword] = useState("")
      const [newPassword, setnewPassword] = useState("")
      const [repPassword, setrepPassword] = useState("")
+      const [userData, setuserData] = useState(null)
 
     const updatePassword = async() => {
         console.log("Update Password");
@@ -101,6 +109,8 @@ const Profile = () => {
         
 
     }
+
+    
     
 
       const uploadFiles = async(file) => {
@@ -126,6 +136,11 @@ const Profile = () => {
                 ...user,
                 profilePicture: resp.data.url
              })
+
+             setuserData({
+                ...userData,
+                profilePicture: resp.data.url
+             })
             
             
         } catch (error) {
@@ -138,7 +153,7 @@ const Profile = () => {
     
       }
 
-      const [userData, setuserData] = useState(null)
+     
       const [post, setuserPost] = useState([])
 
       useEffect(() => {

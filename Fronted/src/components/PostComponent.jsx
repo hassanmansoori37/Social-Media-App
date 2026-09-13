@@ -87,21 +87,23 @@ export const PostComponent = ({singlePost, getAllPost }) => {
     return(
           <div className='border-2 p-2 flex flex-col gap-2 rounded-lg w-full'>
           <Link className='w-full flex items-center gap-2'
-           to={`/profile/${singlePost.userId._id}`}>
-            <img className='w-12 h-12 rounded-full border cursor-pointer' src={singlePost.userId.profilePicture}
+           to={`/profile/${singlePost?.userId?._id}`}>
+            <img className='w-12 h-12 rounded-full border cursor-pointer' src={singlePost?.userId?.profilePicture}
              alt="profile-picture" />
-             <h3 className='text-xl font-bold text-left cursor-pointer'>{singlePost.userId.firstname} {singlePost.userId.lastname}</h3>
-             <b className='ml-auto'>{moment(singlePost.id).fromNow()}</b>
+             <h3 className='text-xl font-bold text-left cursor-pointer'>{singlePost?.userId?.firstname} {singlePost?.userId?.lastname}</h3>
+            <b className='ml-auto'>{moment(singlePost?.createdAt)?.fromNow()}</b>
           </Link>
           
-          <h2 className='font-bold text-2xl'>{singlePost.title}</h2>
-          <p>{singlePost.description}</p>
+          <Link to={`/post/${singlePost?._id}`}>
+          <h2 className='font-bold text-2xl'>{singlePost?.title}</h2>
+          <p>{singlePost?.description}</p>
+          </Link>
 
-          {user._id === singlePost.userId._id ?   <div className='flex gap-2'>
-            <button onClick={() => editPost(singlePost._id, singlePost.title,singlePost.description)}
+          {user?._id === singlePost?.userId?._id ?   <div className='flex gap-2'>
+            <button onClick={() => editPost(singlePost?._id, singlePost?.title,singlePost?.description)}
              className='bg-green-600 cursor-pointer hover:bg-green-500 transition-colors
             duration-400 text-white text-xs py-2 px-4 rounded-md'>Edit</button>
-            <button onClick={() => deletePost(singlePost._id)}
+            <button onClick={() => deletePost(singlePost?._id)}
              className='bg-red-600 hover:bg-red-500 transition-colors duration-400 cursor-pointer
              text-white text-xs py-2 px-4 rounded-md'>Delete</button>
           </div> : null}

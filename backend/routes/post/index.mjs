@@ -76,7 +76,7 @@ router.get('/post/:postId' , async(req, res) => {
 
 
         // const singlePost = await PostModel.find({_id: req.params.postId})
-        const singlePost = await PostModel.findOne({_id: req.params.postId})
+        const singlePost = await PostModel.findOne({_id: req.params.postId}).populate("userId")
 
         if (!singlePost) {
             return res.status(404).send({

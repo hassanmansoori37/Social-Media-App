@@ -13,6 +13,12 @@ const postSchema = new mongoose.Schema({
         trim: true
     },
 
+    ImageUrl: {
+        type: String,
+        trim: true,
+        default: null
+    },
+
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "users"

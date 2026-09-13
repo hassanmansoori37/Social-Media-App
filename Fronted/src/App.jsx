@@ -9,6 +9,8 @@ import { useEffect } from 'react';
 import { store } from './store/states';
 import SplaceScreen from './pages/SplachScreen';
 import Profile from './pages/Profile';
+import SinglePost from './components/SinglePost';
+import Chat from './pages/Chat';
 
 
 const App = () => {
@@ -52,6 +54,8 @@ const App = () => {
         <Route path='/' element={<Post />} />
         <Route path='/profile' element={<Profile />} />
         <Route path='/profile/:userId' element={<Profile />} />
+         <Route path='/post/:postId' element={<SinglePost />} />
+          <Route path='/chat' element={<Chat />} />
       <Route path='*' element={<Navigate to = '/' />} />
       </Routes> : null}
 

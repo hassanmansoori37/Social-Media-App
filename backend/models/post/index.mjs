@@ -22,6 +22,11 @@ const postSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "users"
+    },
+    like: {
+        type: [mongoose.Schema.Types.ObjectId],
+        default: [],
+        ref: "users"
     }
 
 }, {timestamps: true})

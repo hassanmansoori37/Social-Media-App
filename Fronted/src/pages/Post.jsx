@@ -7,11 +7,13 @@ import { baseUrl } from '../core'
 import {PostComponent } from '../components/PostComponent'
 import Input from '../components/Input'
 import { useDebounce } from '../hooks/useDebounce'
+import Button from '../components/Button'
 
 
 const Post = () => {
   const [post, setPost] = useState([])
     const [searchText, setSearchText] = useState('')
+    const [totalPost, setTotalPost] = useState(0)
   
 
   // Debounce the input value by 500ms
@@ -25,14 +27,15 @@ const Post = () => {
 
   const getAllPost = async(searchText = "") => {
     try {
-     const resp = await axios.get(`${baseUrl}/api/v1/post?q=${searchText}` , {
+     const resp = await axios.get(`${baseUrl}/api/v1/post?q=${searchText}&skip=${post?.length}` , {
       headers: {
         token: localStorage.getItem("token")
     }
 
      })
       // console.log(resp.data.data);
-      setPost(resp.data.data)
+      setPost([...post, ...resp.data.data])
+      setTotalPost(resp.data.totalPost)
       
       
     } catch (error) {
@@ -65,6 +68,7 @@ const Post = () => {
       
       
     </div>
+    {post.length === totalPost ? null : <div className='w-full flex justify-center my-8'><Button onClick={getAllPost}>Load more</Button></div>}
   </div>
   )
 }

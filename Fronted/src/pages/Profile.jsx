@@ -155,6 +155,7 @@ const Profile = () => {
 
      
       const [post, setuserPost] = useState([])
+       const [totalPost, setTotalPost] = useState(0)
 
       useEffect(() => {
         getOtherUserProfle()
@@ -183,13 +184,16 @@ const Profile = () => {
 
        const getOtherPosts = async() => {
         try {
-            const resp = await axios.get(`${baseUrl}/api/v1/profile/posts/${userId || user._id}` , {
+            const resp = await axios.get(`${baseUrl}/api/v1/profile/posts/${userId || user._id}?skip=${post?.length}` , {
                 headers: {
                     token: localStorage.getItem("token")
                 }
             })
 
-            setuserPost(resp.data.data)
+            // setuserPost(resp.data.data)
+            setuserPost([...post, ...resp.data.data])
+           setTotalPost(resp.data.totalPost)
+
 
             console.log(resp);
             
@@ -259,13 +263,15 @@ const Profile = () => {
                     <div className='result flex justify-start items-start gap-2 p-2 flex-wrap'>
       {post.map((singlePost, index) => {
       return(
-        <PostComponent singlePost={singlePost} key={index}  />
+        <PostComponent singlePost={singlePost} key={index} getAllPost={getOtherPosts}  />
         
       )
   
     })}
 
     </div>
+    {post.length === totalPost ? null : <div className='w-full flex justify-center my-8'><Button onClick={getOtherPosts}>Load more</Button></div>}
+      
       
 
     

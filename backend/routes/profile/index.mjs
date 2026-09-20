@@ -193,12 +193,20 @@ router.put('/password' , async(req, res) => {
 
 router.get('/profile/posts/:userId' , async(req, res) => {
     try {
+         const skip = req.query.skip || 0
 
-        const allPosts = await PostModel.find({userId: req.params.userId}).populate("userId")
+        const allPosts = await PostModel.find({userId: req.params.userId})
+        .populate("userId").populate({
+            path: "like",
+            select: "firstname lastname profilePicture"
+        }).skip(skip).limit(5)
+
+        const totalPost = await PostModel.countDocuments({userId: req.params.userId})
 
         return res.send({
             message: "profile posts fetched",
-            data: allPosts
+            data: allPosts,
+            totalPost: totalPost
         })
         
     } catch (error) {

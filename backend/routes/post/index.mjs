@@ -73,6 +73,7 @@ router.post('/post' ,multerMiddleware.any(), async (req, res) => {
 router.get("/post", async (req, res) => {
     try {
         const q = req.query.q ? req.query.q.trim() : ""
+        const skip = req.query.skip || 0
 
         // Build query filter
         let query = {}
@@ -86,10 +87,16 @@ router.get("/post", async (req, res) => {
         }
 
         const allPost = await PostModel.find(query).populate("userId")
+        .populate({
+            path: "like",
+            select: "firstname lastname profilePicture"
+        }).skip(skip).limit(5)
+        const totalPost = await PostModel.countDocuments({})
 
         return res.send({
             message: "all posts fetched",
-            data: allPost
+            data: allPost,
+            totalPost: totalPost
         })
 
     } catch (error) {
@@ -121,7 +128,12 @@ router.get('/post/:postId' , async(req, res) => {
 
 
         // const singlePost = await PostModel.find({_id: req.params.postId})
-        const singlePost = await PostModel.findOne({_id: req.params.postId}).populate("userId")
+        const singlePost = await PostModel.findOne({_id: req.params.postId})
+        .populate("userId")
+        .populate({
+            path: "like",
+            select: "firstname lastname profilePicture"
+        })
 
         if (!singlePost) {
             return res.status(404).send({
@@ -237,6 +249,61 @@ router.delete('/post/:postId' , async(req, res) => {
         
         return res.send({
             message: "single post deleted"
+        })
+        
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({
+            message: "Internal server error"
+        })    
+        
+    }
+})
+
+router.post('/post/like/:postId' , async(req, res) => {
+  
+    try {
+          const postId = req.params.postId
+     if (!postId) {
+            return res.status(400).send({
+                message: "post id is required"
+            })
+            
+        }
+
+        if (!isValidObjectId(postId)) {
+            return res.status(400).send({
+                message: "id is invalid"
+            })
+            
+        }
+
+        const post =  await PostModel.findOne({_id: postId})
+
+         if (!post) {
+            return res.status(404).send({
+                message: "post not found"
+            })
+            
+        }
+
+        if(post.like.includes(req?.currentUser?._id)){
+            // dislike krwana ha
+            const remainingId = post.like.filter((id) => id?.toString() !== req?.currentUser?._id?.toString())
+            post.like = remainingId
+
+        } else{
+            // like krwana ha means id insert krwani ha user ki
+            post.like.unshift(req?.currentUser?._id)
+
+        }
+
+        await post.save()
+        
+        
+        
+        return res.send({
+            message: "single post like done"
         })
         
     } catch (error) {

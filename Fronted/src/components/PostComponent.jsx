@@ -1,5 +1,5 @@
 
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { FaRegThumbsUp as LikeEmpty, FaThumbsUp as LikeFill } from "react-icons/fa";
 import { FaCommentAlt as CommentIcon } from "react-icons/fa";
 import { IoMdShare as ShareIcon } from "react-icons/io";
@@ -11,6 +11,7 @@ import { baseUrl } from '../core';
 
 export const PostComponent = ({singlePost, getAllPost }) => {
   const {user} = store()
+  const navigate = useNavigate()
 
    const deletePost = async(postId) => {
     if(!postId){
@@ -84,6 +85,29 @@ export const PostComponent = ({singlePost, getAllPost }) => {
       
     }
 
+    const likePost = async() => {
+      try {
+        const resp = await axios.post(`${baseUrl}/api/v1/post/like/${singlePost?._id}`, {} , {
+          headers: {
+            token: localStorage.getItem("token")
+          }
+        })
+        // console.log("like done");
+        getAllPost()
+        
+      } catch (error) {
+        console.log(error);
+        alert(error?.response?.data?.message)
+        
+        
+      }
+
+    }
+
+    // console.log(singlePost?.like);
+    const isLiked = singlePost?.like?.find((singleUser) => singleUser?._id?.toString() === user?._id?.toString())
+    
+
     return(
           <div className='border-2 p-2 flex flex-col gap-2 rounded-lg w-full'>
           <Link className='w-full flex items-center gap-2'
@@ -121,8 +145,11 @@ export const PostComponent = ({singlePost, getAllPost }) => {
           </div> : null}
 
           <div className='w-full grid grid-cols-3 gap-2'>
-            <button className='cursor-pointer p-2 w-full flex justify-center items-center gap-2 bg-gray-300 rounded-md hover:bg-gray-500 hover:text-white transition-colors duration-200'><LikeEmpty />Like</button>
-            <button className='cursor-pointer p-2 w-full flex justify-center items-center gap-2 bg-gray-300 rounded-md hover:bg-gray-500 hover:text-white transition-colors duration-200'><CommentIcon />Comment</button>
+            <button className='cursor-pointer p-2 w-full flex justify-center items-center gap-2 bg-gray-300 rounded-md hover:bg-gray-500 hover:text-white transition-colors duration-200'
+            onClick={likePost}> {isLiked ? <LikeFill /> : <LikeEmpty /> }
+             Like ({singlePost?.like?.length || 0})</button>
+            <button className='cursor-pointer p-2 w-full flex justify-center items-center gap-2 bg-gray-300 rounded-md hover:bg-gray-500 hover:text-white transition-colors duration-200'
+               onClick={() => navigate(`/post/${singlePost._id}`)}> <CommentIcon />Comment</button>
             <button
             onClick={sharePost}
              className='cursor-pointer p-2 w-full flex justify-center items-center gap-2 bg-gray-300 rounded-md hover:bg-gray-500 hover:text-white transition-colors duration-200'><ShareIcon />Share</button>

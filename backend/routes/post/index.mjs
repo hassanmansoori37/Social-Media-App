@@ -90,7 +90,10 @@ router.get("/post", async (req, res) => {
         .populate({
             path: "like",
             select: "firstname lastname profilePicture"
-        }).skip(skip).limit(5)
+        }).sort({createdAt: - 1})
+        .skip(skip)
+        .limit(5)
+
         const totalPost = await PostModel.countDocuments({})
 
         return res.send({

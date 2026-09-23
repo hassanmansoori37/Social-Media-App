@@ -9,7 +9,7 @@ import axios from 'axios';
 import { baseUrl } from '../core';
 
 
-export const PostComponent = ({singlePost, getAllPost }) => {
+export const PostComponent = ({singlePost, setPost }) => {
   const {user} = store()
   const navigate = useNavigate()
 
@@ -29,8 +29,9 @@ export const PostComponent = ({singlePost, getAllPost }) => {
 
 
       })
+      setPost((prev) => prev.filter((post) => post?._id?.toString() !== singlePost?._id?.toString() ))
       alert("post delete")
-      getAllPost()
+      // getAllPost()
       
     } catch (error) {
       console.log(error);
@@ -61,8 +62,16 @@ export const PostComponent = ({singlePost, getAllPost }) => {
                 }
             })
 
+      setPost((prev) => prev.map((post) => post?._id?.toString() === singlePost?._id?.toString() ? 
+      {
+        ...post,
+         title: editTitle,
+         description: editDesc,
+
+      }: post ))
+
       alert("post edit")
-      getAllPost()
+      // getAllPost()
       
     } catch (error) {
       console.log(error);
@@ -85,6 +94,8 @@ export const PostComponent = ({singlePost, getAllPost }) => {
       
     }
 
+    const isLiked = singlePost?.like?.find((singleUser) => singleUser?._id?.toString() === user?._id?.toString())
+
     const likePost = async() => {
       try {
         const resp = await axios.post(`${baseUrl}/api/v1/post/like/${singlePost?._id}`, {} , {
@@ -93,7 +104,42 @@ export const PostComponent = ({singlePost, getAllPost }) => {
           }
         })
         // console.log("like done");
-        getAllPost()
+        // getAllPost()
+        if (isLiked) {
+          // array mai sy apni id nikalni ha
+          // like ke array mese apna user nikala 
+          const updatedLiked = singlePost?.like?.filter((like) => like?._id?.toString() !== user?._id?.toString() )
+          
+          // current post ko update krdia like ke array ko
+          setPost((prev) => prev.map((post) => post?._id?.toString() === singlePost?._id?.toString() ? {
+            ...post,
+            like: updatedLiked,
+
+          }: post))
+          
+        } else {
+          // aray mai apni id dalni ha with details
+          // like ke array me apna user dalna ha
+          const updatedLiked = [
+            ...singlePost?.like,
+            {
+              firstname: user?.firstname,
+              lastname: user?.lastname,
+              _id: user?._id,
+              profilePicture: user?.profilePicture,
+          
+            }
+          ]
+          // current post ko update krdia like ke array ko
+          setPost((prev) => prev.map((post) => post?._id?.toString() === singlePost?._id?.toString() ? {
+            ...post,
+            like: updatedLiked,
+
+          }: post))
+          
+          
+        }
+      
         
       } catch (error) {
         console.log(error);
@@ -105,7 +151,7 @@ export const PostComponent = ({singlePost, getAllPost }) => {
     }
 
     // console.log(singlePost?.like);
-    const isLiked = singlePost?.like?.find((singleUser) => singleUser?._id?.toString() === user?._id?.toString())
+    
     
 
     return(

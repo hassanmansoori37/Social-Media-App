@@ -8,7 +8,7 @@ import Header from "./Header"
 
 const SinglePost = () => {
     const params = useParams()
-    const [singlePost, setsinglePost] = useState(null)
+    const [singlePost, setsinglePost] = useState([])
 
     useEffect(() => {
         getsinglePost()
@@ -22,7 +22,7 @@ const SinglePost = () => {
                 }
             })
             // console.log(resp.data.data);
-            setsinglePost(resp.data.data)
+            setsinglePost([resp.data.data])
             
             
         } catch (error) {
@@ -35,10 +35,10 @@ const SinglePost = () => {
         <>
         <Header />
         <div className="p-4 w-[80%] m-auto">
-            <PostComponent singlePost={singlePost} getAllPost={getsinglePost} />
+            <PostComponent singlePost={singlePost[0]} setPost={setsinglePost} getAllPost={getsinglePost} />
             <h2 className="text-xl my-4">Liked by: </h2>
           <div className="mt-4 flex gap-2">
-              {singlePost?.like?.map((like, i) => {
+              {singlePost?.[0]?.like?.map((like, i) => {
                 return(
                     <Link to={`/profile/${like?._id}`} key={i} className="flex w-fit gap-2 items-center border rounded-full px-2 hover:bg-gray-300 transition-colors">
                         <img className="w-6 h-6 rounded-full border" 

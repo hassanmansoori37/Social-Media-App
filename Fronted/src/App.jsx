@@ -11,6 +11,7 @@ import SplaceScreen from './pages/SplachScreen';
 import Profile from './pages/Profile';
 import SinglePost from './components/SinglePost';
 import Chat from './pages/Chat';
+import VerifyEmail from './pages/VerifyEmail';
 
 
 const App = () => {
@@ -63,6 +64,7 @@ const App = () => {
       <Routes>
       <Route path='/login' element={<Login />} />
       <Route path='/signup' element={<Signup />} />
+      <Route path='/verify-email' element={<VerifyEmail />} />
       <Route path='*' element={<Navigate to='/' />} />
       </Routes> : null}
 

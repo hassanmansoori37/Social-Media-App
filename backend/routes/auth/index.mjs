@@ -6,6 +6,7 @@ import jsonwebtoken from 'jsonwebtoken'
 
 const router = express.Router()
 
+// auth apis
 router.post('/signup' , async (req, res) => {
     try {
         const firstname = req.body.firstname
@@ -166,4 +167,112 @@ router.post('/login' , async (req, res) => {
         
     }
 })
+
+// verfication apis
+router.post('/send-otp' , async (req, res) => {
+    try {
+        
+        const email = req.body.email
+
+      // email validation
+        if (!email) {
+           return res.status(400).send({
+                message: "email is required"
+            })
+            
+        }
+
+        
+        // pattern validation
+
+        if(!emailPattern.test(email.toLowerCase())){
+            return res.status(400).send({
+                message: "email is invalid"
+            })
+
+        }
+
+        const user =  await UserModel.findOne({email: email})
+
+        if (!user) {
+            return res.status(404).send({
+                message: "account not found"
+            })
+            
+        }
+
+        // generate otp
+        // hash otp and save it to database with user email;
+        // send otp to email
+
+
+        return res.send({
+            message: "send otp"
+        })
+        
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({
+            message: "Internal server error"
+        })    
+        
+    }
+})
+
+router.post('/verify-otp' , async (req, res) => {
+    try {
+        
+        const email = req.body.email
+        const otp = req.body.otp
+
+      // email validation
+        if (!email) {
+           return res.status(400).send({
+                message: "email is required"
+            })
+            
+        }
+
+        
+        // pattern validation
+
+        if(!emailPattern.test(email.toLowerCase())){
+            return res.status(400).send({
+                message: "email is invalid"
+            })
+
+        }
+
+        // does otp exist for email
+        // is otp expired
+        // is otp correct
+        // mark email verify
+
+        const user =  await UserModel.findOne({email: email})
+
+        if (!user) {
+            return res.status(404).send({
+                message: "account not found"
+            })
+            
+        }
+
+        // generate otp
+        // send otp to email
+
+
+        return res.send({
+            message: "verify otp"
+        })
+        
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({
+            message: "Internal server error"
+        })    
+        
+    }
+})
+
+
 export default router

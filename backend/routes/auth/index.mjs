@@ -1,8 +1,10 @@
 import express from 'express'
-import { UserModel } from '../../models/index.mjs'
+import { emailOtpModel, PasswordOtpModel, UserModel } from '../../models/index.mjs'
 import { emailPattern } from '../../utilities/core.mjs'
 import bcrypt from 'bcryptjs'
 import jsonwebtoken from 'jsonwebtoken'
+import otpGenerator from 'otp-generator'
+import { sendEmail } from '../../utilities/functions.mjs'
 
 const router = express.Router()
 
@@ -129,6 +131,13 @@ router.post('/login' , async (req, res) => {
             
         }
 
+          if (!userAccount?.isEmailVerified) {
+            return res.status(400).send({
+                message: "email is not verified"
+            })
+            
+        }
+
         const isPasswordTrue = await bcrypt.compare(password, userAccount.password)
         // console.log(isPasswordTrue);
 
@@ -202,12 +211,31 @@ router.post('/send-otp' , async (req, res) => {
         }
 
         // generate otp
+        const otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false,
+            lowerCaseAlphabets: false
+         });
+
+         // generate otp hash
+         const otpCodeHash = await bcrypt.hash(otp, 12)
+
+
         // hash otp and save it to database with user email;
+        await emailOtpModel.create({
+            email: email,
+            otpCodeHash: otpCodeHash
+        })
         // send otp to email
+        await sendEmail(
+            email,
+            "Verify your email",
+            `Hello user here is your email verification OTP ${otp} please don't share with anyone`
+
+            )
 
 
         return res.send({
-            message: "send otp"
+            message: "otp sent successfully",
+            
         })
         
     } catch (error) {
@@ -243,10 +271,89 @@ router.post('/verify-otp' , async (req, res) => {
 
         }
 
+        // otp validation
+        if (!otp) {
+           return res.status(400).send({
+                message: "otp is required"
+            })
+            
+        }
+
         // does otp exist for email
-        // is otp expired
+        const existingOtp = await emailOtpModel.findOne({email: email}).sort({createdAt: - 1 })
+
+        if (!existingOtp) {
+            return res.status(400).send({
+                message: "otp is invalid"
+            })
+            
+        }
+        
         // is otp correct
+        const isOtpValid = await bcrypt.compare(otp, existingOtp.otpCodeHash)
+
+        if (!isOtpValid) {
+           return res.status(400).send({
+                message: "otp is invalid"
+            })
+            
+        }
+
         // mark email verify
+        await UserModel.updateOne({email: email} ,{
+            $set: {
+                isEmailVerified: true
+            }
+        })
+
+        // is otp expired
+
+        const user =  await UserModel.findOne({email: email})
+
+        if (!user) {
+            return res.status(404).send({
+                message: "account not found"
+            })
+            
+        }
+
+
+        return res.send({
+            message: "Email verified"
+        })
+        
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({
+            message: "Internal server error"
+        })    
+        
+    }
+})
+
+// forgot password api
+router.post('/forgot-password' , async (req, res) => {
+    try {
+        
+        const email = req.body.email
+
+      // email validation
+        if (!email) {
+           return res.status(400).send({
+                message: "email is required"
+            })
+            
+        }
+
+        
+        // pattern validation
+
+        if(!emailPattern.test(email.toLowerCase())){
+            return res.status(400).send({
+                message: "email is invalid"
+            })
+
+        }
 
         const user =  await UserModel.findOne({email: email})
 
@@ -258,11 +365,128 @@ router.post('/verify-otp' , async (req, res) => {
         }
 
         // generate otp
+        const otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false,
+            lowerCaseAlphabets: false
+         });
+
+         // generate otp hash
+         const otpCodeHash = await bcrypt.hash(otp, 12)
+
+
+        // hash otp and save it to database with user email;
+        await PasswordOtpModel.create({
+            email: email,
+            otpCodeHash: otpCodeHash
+        })
         // send otp to email
+        await sendEmail(
+            email,
+            "forgot Password OTP",
+            `Hello user here is your forgot Passowrd OTP ${otp} please don't share with anyone`
+
+            )
 
 
         return res.send({
-            message: "verify otp"
+            message: "otp sent successfully",
+            
+        })
+        
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({
+            message: "Internal server error"
+        })    
+        
+    }
+})
+
+router.post('/forgot-password-complete' , async (req, res) => {
+    try {
+        
+        const email = req.body.email
+        const otp = req.body.otp
+        const newPassword = req.body.newPassword
+
+      // email validation
+        if (!email) {
+           return res.status(400).send({
+                message: "email is required"
+            })
+            
+        }
+
+        
+        // pattern validation
+
+        if(!emailPattern.test(email.toLowerCase())){
+            return res.status(400).send({
+                message: "email is invalid"
+            })
+
+        }
+
+        // otp validation
+        if (!otp) {
+           return res.status(400).send({
+                message: "otp is required"
+            })
+            
+        }
+
+        // password validation
+          if (!newPassword) {
+            return res.status(400).send({
+                message: "password is required"
+            })
+            
+        }
+
+
+        // does otp exist for email
+        const existingOtp = await PasswordOtpModel.findOne({email: email}).sort({createdAt: - 1 })
+
+        if (!existingOtp) {
+            return res.status(400).send({
+                message: "otp is invalid"
+            })
+            
+        }
+        
+        // is otp correct
+        const isOtpValid = await bcrypt.compare(otp, existingOtp.otpCodeHash)
+
+        if (!isOtpValid) {
+           return res.status(400).send({
+                message: "otp is invalid"
+            })
+            
+        }
+        const passwordHash = await bcrypt.hash(newPassword, 12)
+
+
+
+        // mark email verify
+        await UserModel.updateOne({email: email} ,{
+            $set: {
+                password: passwordHash
+            }
+        })
+
+
+
+        const user =  await UserModel.findOne({email: email})
+
+        if (!user) {
+            return res.status(404).send({
+                message: "account not found"
+            })
+            
+        }
+
+
+        return res.send({
+            message: "Password updated"
         })
         
     } catch (error) {

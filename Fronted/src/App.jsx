@@ -12,6 +12,8 @@ import Profile from './pages/Profile';
 import SinglePost from './components/SinglePost';
 import Chat from './pages/Chat';
 import VerifyEmail from './pages/VerifyEmail';
+import ForgotPassword from './pages/forgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 
 const App = () => {
@@ -65,6 +67,8 @@ const App = () => {
       <Route path='/login' element={<Login />} />
       <Route path='/signup' element={<Signup />} />
       <Route path='/verify-email' element={<VerifyEmail />} />
+       <Route path='/forgot-password' element={<ForgotPassword />} />
+       <Route path='/reset-password' element={<ResetPassword />} />
       <Route path='*' element={<Navigate to='/' />} />
       </Routes> : null}
 

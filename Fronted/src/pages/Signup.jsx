@@ -49,8 +49,15 @@ const Signup = () => {
         email: email,
         password: password,
     })
-     alert("Singup done")
-     navigate('/login')
+    //  alert("Singup done")
+    await axios.post(`${baseUrl}/api/v1/send-otp` , {
+        email: email
+    })
+     navigate('/verify-email' , {
+        state: {
+            email: email
+        }
+     })
 
             
         } catch (error) {

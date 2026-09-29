@@ -12,7 +12,7 @@ import Profile from './pages/Profile';
 import SinglePost from './components/SinglePost';
 import Chat from './pages/Chat';
 import VerifyEmail from './pages/VerifyEmail';
-import ForgotPassword from './pages/forgotPassword';
+import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Security from './pages/Security';
 

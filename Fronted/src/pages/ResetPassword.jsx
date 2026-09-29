@@ -45,7 +45,7 @@ const ResetPassword = () => {
 
             
     } catch (error) {
-            console.error(error);
+            console.log(error);
             alert(error.response.data.message)
             
         }
@@ -53,12 +53,12 @@ const ResetPassword = () => {
 
      const send_otp = async() => {
         try {
-             await axios.post(`${baseUrl}/api/v1/send-otp` , {
+             await axios.post(`${baseUrl}/api/v1/forgot-password` , {
                     email: location?.state?.email
                 })
             
         } catch (error) {
-            console.error(error);
+            console.log(error);
             alert(error.response.data.message)
 
             
@@ -69,20 +69,20 @@ const ResetPassword = () => {
 
 
     return(
-        <form onSubmit={handleSubmit} className="w-full flex flex-col justify-center items-center gap-2 mt-8">
-            <h2>Reset Password</h2>
-            <p>Please enter OTP code seent to <b>{location?.state?.email}</b></p>
-                 <OtpInput
+        <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto mt-10 p-6 bg-white rounded-xl shadow-lg border border-gray-100 flex flex-col gap-4">
+            <h2 className="text-2xl font-bold text-center text-gray-800">Reset Password</h2>
+            <p className="text-center">Please enter OTP code sent to <b>{location?.state?.email}</b></p>
+                 <OtpInput 
                  value={otp} onChange={(e) => set_otp(e)}
                  />
                 <Input
-                 placeholder="Enter your password" label="Password"
+                 placeholder="Enter your password" label="Password" type="password"
                  value={password} onChange={(e) => set_password(e.target.value)}
                  required
                  />
                  
                  <Input
-                placeholder="Enter Confirm Password" label="ConfirmPassword"
+                placeholder="Enter Confirm Password" label="ConfirmPassword" type="password"
                  value={repPassword} onChange={(e) => set_repPassword(e.target.value)}
                  required
                  />

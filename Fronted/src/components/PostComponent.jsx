@@ -154,56 +154,131 @@ export const PostComponent = ({singlePost, setPost }) => {
     
     
 
-    return(
-          <div className='border-2 p-2 flex flex-col gap-2 rounded-lg w-full'>
-          <Link className='w-full flex items-center gap-2'
-           to={`/profile/${singlePost?.userId?._id}`}>
-            <img className='w-12 h-12 rounded-full border cursor-pointer' src={singlePost?.userId?.profilePicture}
-             alt="profile-picture" />
-             <h3 className='text-xl font-bold text-left cursor-pointer'>{singlePost?.userId?.firstname} {singlePost?.userId?.lastname}</h3>
-            <b className='ml-auto'>{moment(singlePost?.createdAt)?.fromNow()}</b>
-          </Link>
-          
-          <Link to={`/post/${singlePost?._id}`}>
-          <h2 className='font-bold text-2xl'>{singlePost?.title}</h2>
-          <p>{singlePost?.description}</p>
-          </Link>
-          {/* <img src={singlePost.imageUrl} alt="post-image" /> */}
-          {singlePost?.imageUrl ? 
-          <a href={singlePost.imageUrl} target='_blank'>
-            <img
-        className=" h-130 object-contain block "
-        src={singlePost.imageUrl}
-        alt="post-image"
-          /> 
-          </a>
-         : null
-        }
-          
+ return (
+  <div className="w-full max-w-[650px] mx-auto bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
 
-          {user?._id === singlePost?.userId?._id ?   <div className='flex gap-2'>
-            <button onClick={() => editPost(singlePost?._id, singlePost?.title,singlePost?.description)}
-             className='bg-green-600 cursor-pointer hover:bg-green-500 transition-colors
-            duration-400 text-white text-xs py-2 px-4 rounded-md'>Edit</button>
-            <button onClick={() => deletePost(singlePost?._id)}
-             className='bg-red-600 hover:bg-red-500 transition-colors duration-400 cursor-pointer
-             text-white text-xs py-2 px-4 rounded-md'>Delete</button>
-          </div> : null}
 
-          <div className='w-full grid grid-cols-3 gap-2'>
-            <button className='cursor-pointer p-2 w-full flex justify-center items-center gap-2 bg-gray-300 rounded-md hover:bg-gray-500 hover:text-white transition-colors duration-200'
-            onClick={likePost}> {isLiked ? <LikeFill /> : <LikeEmpty /> }
-             Like ({singlePost?.like?.length || 0})</button>
-            <button className='cursor-pointer p-2 w-full flex justify-center items-center gap-2 bg-gray-300 rounded-md hover:bg-gray-500 hover:text-white transition-colors duration-200'
-               onClick={() => navigate(`/post/${singlePost._id}`)}> <CommentIcon />Comment</button>
-            <button
-            onClick={sharePost}
-             className='cursor-pointer p-2 w-full flex justify-center items-center gap-2 bg-gray-300 rounded-md hover:bg-gray-500 hover:text-white transition-colors duration-200'><ShareIcon />Share</button>
-          </div>
-        </div>
-    )
-  
-    }
-          
-        
-    
+    {/* Header */}
+    <Link
+      className="w-full flex items-center gap-3 p-4 hover:bg-gray-50 transition"
+      to={`/profile/${singlePost?.userId?._id}`}
+    >
+      <img
+        className="w-11 h-11 rounded-full object-cover border border-gray-200"
+        src={singlePost?.userId?.profilePicture}
+        alt="profile-picture"
+      />
+
+      <div className="flex flex-col min-w-0">
+        <h3 className="text-[20px] font-semibold text-gray-900">
+          {singlePost?.userId?.firstname} {singlePost?.userId?.lastname}
+        </h3>
+
+        <span className="text-xs text-gray-500">
+          {moment(singlePost?.createdAt)?.fromNow()}
+        </span>
+      </div>
+    </Link>
+
+    {/* Post Content */}
+    <Link to={`/post/${singlePost?._id}`}>
+      <div className="px-4 pb-3">
+        <h2 className="text-2xl font-semibold text-gray-900 mb-1">
+          {singlePost?.title}
+        </h2>
+
+        <p className="text-[20px] text-gray-700 leading-relaxed">
+          {singlePost?.description}
+        </p>
+      </div>
+    </Link>
+
+    {/* Post Image */}
+    {singlePost?.imageUrl ? (
+      <a
+        href={singlePost.imageUrl}
+        target="_blank"
+        rel="noreferrer"
+        className="block w-full"
+      >
+        <img
+          className="w-full max-h-[500px] object-contain bg-gray-100"
+          src={singlePost.imageUrl}
+          alt="post-image"
+        />
+      </a>
+    ) : null}
+
+    {/* Edit / Delete */}
+    {user?._id === singlePost?.userId?._id ? (
+      <div className="flex gap-2 px-4 py-3">
+        <button
+          onClick={() =>
+            editPost(
+              singlePost?._id,
+              singlePost?.title,
+              singlePost?.description
+            )
+          }
+          className="bg-green-600 hover:bg-green-700 text-white text-xs font-medium py-2 px-4 rounded-lg cursor-pointer transition"
+        >
+          Edit
+        </button>
+
+        <button
+          onClick={() => deletePost(singlePost?._id)}
+          className="bg-red-600 hover:bg-red-700 text-white text-xs font-medium py-2 px-4 rounded-lg cursor-pointer transition"
+        >
+          Delete
+        </button>
+      </div>
+    ) : null}
+
+    {/* Like Count */}
+
+<div className="px-4 pt-3 pb-2 text-sm text-gray-500">
+  <span className="font-medium">
+    {singlePost?.like?.length || 0} {singlePost?.like?.length === 1 ? "like" : "likes"}
+  </span>
+</div>
+
+    {/* Actions */}
+    <div className="grid grid-cols-3 px-2 py-2 gap-1">
+
+      <button
+        onClick={likePost}
+        className="cursor-pointer py-2.5 rounded-lg flex justify-center items-center gap-2
+        text-sm font-medium text-gray-600 hover:bg-gray-100 transition"
+      >
+        {isLiked ? (
+          <LikeFill className="text-blue-600 text-lg" />
+        ) : (
+          <LikeEmpty className="text-lg" />
+        )}
+        <span className={isLiked ? "text-blue-600" : ""}>
+          Like
+        </span>
+      </button>
+
+      <button
+        onClick={() => navigate(`/post/${singlePost._id}`)}
+        className="cursor-pointer py-2.5 rounded-lg flex justify-center items-center gap-2
+        text-sm font-medium text-gray-600 hover:bg-gray-100 transition"
+      >
+        <CommentIcon className="text-lg" />
+        Comment
+      </button>
+
+      <button
+        onClick={sharePost}
+        className="cursor-pointer py-2.5 rounded-lg flex justify-center items-center gap-2
+        text-sm font-medium text-gray-600 hover:bg-gray-100 transition"
+      >
+        <ShareIcon className="text-lg" />
+        Share
+      </button>
+
+    </div>
+  </div>
+)
+}  

@@ -14,10 +14,12 @@ import Chat from './pages/Chat';
 import VerifyEmail from './pages/VerifyEmail';
 import ForgotPassword from './pages/forgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import Security from './pages/Security';
 
 
 const App = () => {
   const {globalLogin, globalLogout, user, isLogin} = store()
+ 
 
 
   useEffect(() => {
@@ -59,6 +61,7 @@ const App = () => {
         <Route path='/profile/:userId' element={<Profile />} />
          <Route path='/post/:postId' element={<SinglePost />} />
           <Route path='/chat' element={<Chat />} />
+          <Route path='/security' element={<Security />} />
       <Route path='*' element={<Navigate to = '/' />} />
       </Routes> : null}
 
@@ -69,7 +72,7 @@ const App = () => {
       <Route path='/verify-email' element={<VerifyEmail />} />
        <Route path='/forgot-password' element={<ForgotPassword />} />
        <Route path='/reset-password' element={<ResetPassword />} />
-      <Route path='*' element={<Navigate to='/' />} />
+      <Route path='*' element={<Navigate to='/login' />} />
       </Routes> : null}
 
       </>

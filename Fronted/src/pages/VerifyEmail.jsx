@@ -8,62 +8,151 @@ import { baseUrl } from "../core"
 
 const VerifyEmail = () => {
 
-
     const [otp, set_otp] = useState("")
     const location = useLocation()
-   
 
     const navigate = useNavigate()
 
-     const handleSubmit = async(e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
         try {
-            await axios.post(`${baseUrl}/api/v1/verify-otp` , {
-                    email: location?.state?.email,
-                    otp: otp
-                })
-                 navigate('/login')
-            
-            
+            await axios.post(`${baseUrl}/api/v1/verify-otp`, {
+                email: location?.state?.email,
+                otp: otp
+            })
+            navigate('/login')
+
         } catch (error) {
             console.error(error);
             alert(error.response.data.message)
-            
         }
     }
 
-    const send_otp = async() => {
+    const send_otp = async () => {
         try {
-             await axios.post(`${baseUrl}/api/v1/send-otp` , {
-                    email: location?.state?.email
-                })
-            
+            await axios.post(`${baseUrl}/api/v1/send-otp`, {
+                email: location?.state?.email
+            })
+
         } catch (error) {
             console.error(error);
             alert(error.response.data.message)
-
-            
         }
     }
 
+    return (
+        <div className="min-h-screen w-full flex">
+
+            {/* ==================== LEFT SIDE: BRANDING ==================== */}
+            <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-[#1877F2] via-[#4C6EF5] to-[#764ba2] items-center justify-center p-12 overflow-hidden">
+
+                <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-white opacity-10 rounded-full blur-3xl"></div>
+                <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-white opacity-10 rounded-full blur-3xl"></div>
+
+                <div className="relative z-10 text-white max-w-md">
+                    <div className="w-20 h-20 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-4xl font-bold mb-8 shadow-2xl">
+                        ✉️
+                    </div>
+
+                    <h1 className="text-5xl font-extrabold mb-4 leading-tight">
+                        Verify Your Email
+                    </h1>
+                    <p className="text-xl text-blue-100 leading-relaxed mb-8">
+                        We've sent a 6-digit OTP to your email. Enter it to verify your account and get started.
+                    </p>
+
+                    <div className="space-y-3 text-blue-50">
+                        <div className="flex items-center gap-3">
+                            <span className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-sm">✓</span>
+                            <span>Quick verification</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <span className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-sm">✓</span>
+                            <span>Secure OTP system</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <span className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-sm">✓</span>
+                            <span>Account protection</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
 
-    return(
-        <form className="w-full flex flex-col justify-center items-center gap-2 mt-8"
-         onSubmit={handleSubmit}>
-            <h2>Verify Email</h2>
-            <p>Please enter OTP code seent to <b>{location?.state?.email}</b></p>
-              <OtpInput
-            value={otp} onChange={(e) => set_otp(e)}
-            />
+            {/* ==================== RIGHT SIDE: FORM ==================== */}
+            <div className="w-full lg:w-1/2 flex items-center justify-center bg-gradient-to-br from-[#F0F2F5] via-[#E8EEF7] to-[#F5F0FA] p-5 relative overflow-hidden">
 
+                <div className="lg:hidden absolute top-[-10%] left-[-10%] w-72 h-72 bg-[#1877F2]/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="lg:hidden absolute bottom-[-10%] right-[-10%] w-72 h-72 bg-[#764ba2]/10 rounded-full blur-3xl pointer-events-none"></div>
 
-            <p>Don't get <b className='text-blue-500 cursor-pointer' onClick={send_otp}>Resend OTP</b></p>
-          <Button>Verify Email</Button>
+                <form
+                    onSubmit={handleSubmit}
+                    className="relative z-10 w-full max-w-md bg-white rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] border border-gray-100 p-7 sm:p-9 flex flex-col gap-4"
+                >
 
-            
-        </form>
+                    {/* Mobile logo */}
+                    <div className="lg:hidden flex justify-center mb-2">
+                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#1877F2] to-[#764ba2] flex items-center justify-center text-white text-2xl font-bold shadow-lg shadow-[#1877F2]/30">
+                            ✉️
+                        </div>
+                    </div>
 
+                    {/* Heading */}
+                    <div className="text-center mb-2">
+                        <h2 className="text-3xl font-extrabold bg-gradient-to-r from-[#1877F2] to-[#764ba2] bg-clip-text text-transparent">
+                            Verify Email
+                        </h2>
+                        <p className="text-gray-500 text-sm mt-2 leading-relaxed">
+                            Please enter the OTP sent to{" "}
+                            <span className="font-semibold text-[#1877F2] break-all">
+                                {location?.state?.email}
+                            </span>
+                        </p>
+                    </div>
+
+                    {/* OTP Input */}
+                    <div className="flex justify-center py-2">
+                        <OtpInput
+                            value={otp}
+                            onChange={(e) => set_otp(e)}
+                        />
+                    </div>
+
+                    {/* Resend OTP */}
+                    <p className="text-sm text-gray-600 text-center">
+                        Didn't get the code?{" "}
+                        <span
+                            className="text-[#1877F2] font-bold cursor-pointer hover:underline"
+                            onClick={send_otp}
+                        >
+                            Resend OTP
+                        </span>
+                    </p>
+
+                    {/* Button */}
+                    <Button>Verify Email</Button>
+
+                    {/* Divider */}
+                    <div className="flex items-center gap-3 my-1">
+                        <div className="flex-1 h-px bg-gray-200"></div>
+                        <span className="text-xs text-gray-400 font-medium">OR</span>
+                        <div className="flex-1 h-px bg-gray-200"></div>
+                    </div>
+
+                    {/* Back to Login */}
+                    <p className="text-sm text-gray-600 text-center">
+                        Already verified?{" "}
+                        <Link
+                            className="text-[#1877F2] font-bold hover:underline"
+                            to="/login"
+                        >
+                            Back to Login
+                        </Link>
+                    </p>
+
+                </form>
+            </div>
+        </div>
     )
 }
 

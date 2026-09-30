@@ -20,8 +20,8 @@ export const connect_database = async () => {
         })
         console.log("mongoose is connected")
     } catch (error) {
-        console.error(error)
-        console.error("mongoose is disconnected");
+       console.error("MongoDB connection error:", error);
+         throw error;
 
     }
 

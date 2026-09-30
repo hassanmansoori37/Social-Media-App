@@ -50,10 +50,10 @@ app.use('/api/v1' ,
 
 
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-  // connect_database()
-})
+// app.listen(port, () => {
+//   console.log(`Example app listening on port ${port}`)
+//   // connect_database()
+// })
 
 connect_database()
 

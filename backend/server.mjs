@@ -17,7 +17,7 @@ app.use(express.json())
 
 // cors
 app.use(cors({
-    origin: "https://social-media-app-jnqb.vercel.app",
+    origin: "https://social-media-app-eight-tawny.vercel.app",
     method: "*"
 }))
 

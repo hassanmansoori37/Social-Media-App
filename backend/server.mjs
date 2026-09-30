@@ -8,9 +8,9 @@ import { UserModel } from './models/index.mjs'
 import morgan from 'morgan'
 const app = express()
 
-const port = 409
+const port = process.env.PORT || 409
 
-
+app.set('trust proxy', 1)
 
 // body parse
 app.use(express.json())
@@ -52,10 +52,10 @@ app.use('/api/v1' ,
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
-  connect_database()
+  // connect_database()
 })
 
-// connect_database()
+connect_database()
 
-// export default app
+export default app
 

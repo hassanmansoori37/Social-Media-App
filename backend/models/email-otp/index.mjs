@@ -12,8 +12,12 @@ const emailOtpSchema = new mongoose.Schema({
     otpCodeHash: {
         type: String,
         required: true,
-    }
+    },
     
+     otpExpiry: {
+        type: Date,
+        required: true,
+    }
 
 }, {timestamps: true})
 

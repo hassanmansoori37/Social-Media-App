@@ -218,11 +218,12 @@ router.post('/send-otp' , async (req, res) => {
          // generate otp hash
          const otpCodeHash = await bcrypt.hash(otp, 12)
 
-
+         const otpExpiry = new Date(Date.now() + 60 * 1000);
         // hash otp and save it to database with user email;
         await emailOtpModel.create({
             email: email,
-            otpCodeHash: otpCodeHash
+            otpCodeHash: otpCodeHash,
+            otpExpiry: otpExpiry,
         })
         // send otp to email
         await sendEmail(
@@ -287,6 +288,12 @@ router.post('/verify-otp' , async (req, res) => {
                 message: "otp is invalid"
             })
             
+        }
+
+         if (new Date() > existingOtp.otpExpiry) {
+            return res.status(400).send({
+                message: "otp has expired. please resend."
+            })
         }
         
         // is otp correct
@@ -372,11 +379,14 @@ router.post('/forgot-password' , async (req, res) => {
          // generate otp hash
          const otpCodeHash = await bcrypt.hash(otp, 12)
 
+          const otpExpiry = new Date(Date.now() + 60 * 1000);
+
 
         // hash otp and save it to database with user email;
         await PasswordOtpModel.create({
             email: email,
-            otpCodeHash: otpCodeHash
+            otpCodeHash: otpCodeHash,
+            otpExpiry: otpExpiry,
         })
         // send otp to email
         await sendEmail(
@@ -451,6 +461,12 @@ router.post('/forgot-password-complete' , async (req, res) => {
                 message: "otp is invalid"
             })
             
+        }
+
+         if (new Date() > existingOtp.otpExpiry) {
+            return res.status(400).send({
+                message: "otp has expired. please resend."
+            })
         }
         
         // is otp correct

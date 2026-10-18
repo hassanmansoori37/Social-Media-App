@@ -4,6 +4,7 @@ import { baseUrl } from "../core"
 import { useEffect, useState } from "react"
 import { PostComponent } from "./PostComponent"
 import Header from "./Header"
+import CommentSection from "./CommentSection"
 
 
 const SinglePost = () => {
@@ -50,6 +51,8 @@ const SinglePost = () => {
                         setPost={setsinglePost}
                         getAllPost={getsinglePost}
                     />
+
+                    <CommentSection postId={singlePost[0]?._id} />
 
                     {/* ==================== LIKED BY SECTION ==================== */}
                     <div className="mt-5 bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.06)] border border-gray-100 p-5">

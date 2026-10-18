@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
-import { authRouter, postRouter, profileRouter } from './routes/index.mjs'
+import { authRouter, commentRouter, postRouter, profileRouter, } from './routes/index.mjs'
 import {connect_database} from './libs/mongoDb.mjs'
 import { authGuardJWT, limiter } from './middlewares/index.mjs'
 import { UserModel } from './models/index.mjs'
@@ -17,7 +17,8 @@ app.use(express.json())
 
 // cors
 app.use(cors({
-    origin: "https://social-media-app-eight-tawny.vercel.app",
+    origin: "https://social-media-app-eight-tawny.vercel.app", 
+    // origin: " http://localhost:5173",
     method: "*"
 }))
 
@@ -46,14 +47,15 @@ app.use('/api/v1' ,
    authRouter,
    authGuardJWT, 
    postRouter,
-   profileRouter)
+   profileRouter,
+  commentRouter)
 
 
 
-// app.listen(port, () => {
-//   console.log(`Example app listening on port ${port}`)
-//   // connect_database()
-// })
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+  // connect_database()
+})
 
 connect_database()
 

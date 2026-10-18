@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import OtpInput from "../components/OtpInput"
 import Button from "../components/Button"
 import { Link, useLocation, useNavigate } from "react-router-dom"
@@ -12,6 +12,20 @@ const VerifyEmail = () => {
     const location = useLocation()
 
     const navigate = useNavigate()
+
+       const [timer, setTimer] = useState(60)
+    const [canResend, setCanResend] = useState(false)
+
+    useEffect(() => {
+        if (timer > 0) {
+            const interval = setInterval(() => {
+                setTimer((prev) => prev - 1)
+            }, 1000)
+            return () => clearInterval(interval)
+        } else {
+            setCanResend(true)
+        }
+    }, [timer])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -27,18 +41,24 @@ const VerifyEmail = () => {
             alert(error.response.data.message)
         }
     }
+ 
 
-    const send_otp = async () => {
-        try {
-            await axios.post(`${baseUrl}/api/v1/send-otp`, {
-                email: location?.state?.email
-            })
+   const send_otp = async () => {
+    if (!canResend) return; // Agar timer chal raha hai toh return
 
-        } catch (error) {
-            console.error(error);
-            alert(error.response.data.message)
-        }
+    try {
+        await axios.post(`${baseUrl}/api/v1/send-otp`, {
+            email: location?.state?.email
+        })
+        //  Timer reset karein
+        setTimer(60)
+        setCanResend(false)
+        alert("OTP sent successfully!")
+    } catch (error) {
+        console.error(error);
+        alert(error.response.data.message)
     }
+}
 
     return (
         <div className="min-h-screen w-full flex">
@@ -119,15 +139,24 @@ const VerifyEmail = () => {
                     </div>
 
                     {/* Resend OTP */}
-                    <p className="text-sm text-gray-600 text-center">
-                        Didn't get the code?{" "}
-                        <span
-                            className="text-[#1877F2] font-bold cursor-pointer hover:underline"
-                            onClick={send_otp}
-                        >
-                            Resend OTP
-                        </span>
-                    </p>
+                   
+           {/* ==================== TIMER UI ==================== */}
+<div className="text-sm text-gray-600 text-center flex flex-col items-center justify-center gap-1 mt-2">
+    <span>Didn't get the code?</span>
+    
+    <button
+        type="button"
+        onClick={send_otp}
+        disabled={!canResend} // Agar timer chal raha hai toh disabled
+        className={`font-bold transition-all ${
+            canResend 
+            ? "text-[#1877F2] hover:underline cursor-pointer" 
+            : "text-gray-400 cursor-not-allowed"
+        }`}
+    >
+        Resend OTP {!canResend && `(${timer}s)`}
+    </button>
+</div>
 
                     {/* Button */}
                     <Button>Verify Email</Button>

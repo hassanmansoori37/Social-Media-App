@@ -28,6 +28,13 @@ const App = () => {
 
 
   const getProfile = async() => {
+
+    const token = localStorage.getItem("token");
+    
+    if (!token) {
+      globalLogout();
+      return;
+    }
     
     try {
       const resp = await axios.get(`${baseUrl}/api/v1/profile` , {
@@ -41,7 +48,10 @@ const App = () => {
 
     } catch (error) {
       console.log(error);
-      globalLogout()
+      if (error.response?.status === 401) {
+        localStorage.removeItem("token");
+        globalLogout()
+      }
       
     }
   }

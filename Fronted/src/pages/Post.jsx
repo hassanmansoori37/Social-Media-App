@@ -39,12 +39,13 @@ const Post = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#F0F2F5] via-[#E8EEF7] to-[#F5F0FA] overflow-x-hidden">
+    // <div className="min-h-screen bg-gradient-to-br from-[#F0F2F5] via-[#E8EEF7] to-[#F5F0FA] overflow-x-hidden">
+        <div className="min-h-screen bg-gradient-to-br from-[#F0F2F5] via-[#E8EEF7] to-[#F5F0FA]">
 
       <Header />
 
       {/* Background decorative circles */}
-      <div className="relative">
+      <div className="relative overflow-x-hidden">
         <div className="absolute top-20 left-[-5%] w-72 h-72 bg-[#1877F2]/10 rounded-full blur-3xl pointer-events-none"></div>
         <div className="absolute top-40 right-[-5%] w-96 h-96 bg-[#764ba2]/10 rounded-full blur-3xl pointer-events-none"></div>
 
